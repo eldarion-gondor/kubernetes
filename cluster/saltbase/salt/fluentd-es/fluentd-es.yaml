@@ -7,13 +7,12 @@ spec:
   containers:
   - name: fluentd-elasticsearch
     image: gcr.io/google_containers/fluentd-elasticsearch:1.8
-    imagePullPolicy: Always
     resources:
       limits:
         cpu: 100m
     env:
-      - name: "FLUENTD_ARGS"
-        value: "-qq"
+    - name: "FLUENTD_ARGS"
+      value: "-qq"
     volumeMounts:
     - name: varlog
       mountPath: /varlog
