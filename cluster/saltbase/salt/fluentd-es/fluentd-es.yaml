@@ -6,13 +6,12 @@ metadata:
 spec:
   containers:
   - name: fluentd-elasticsearch
-    image: gcr.io/google_containers/fluentd-elasticsearch:1.8
+    image: gcr.io/eldarion-gondor/logging-agent:latest
+    imagePullPolicy: Always
     resources:
       limits:
         cpu: 100m
     env:
-    - name: "FLUENTD_ARGS"
-      value: "-qq"
     volumeMounts:
     - name: varlog
       mountPath: /varlog
@@ -25,4 +24,3 @@ spec:
   - name: containers
     hostPath:
       path: /var/lib/docker/containers
-
