@@ -11,4 +11,5 @@ pkg-core:
       - python-apt
       - glusterfs-client
       - socat
+      - nfs-common
 {% endif %}
