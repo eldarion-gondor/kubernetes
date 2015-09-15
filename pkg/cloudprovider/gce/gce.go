@@ -68,6 +68,7 @@ type GCECloud struct {
 type Config struct {
 	Global struct {
 		TokenURL    string `gcfg:"token-url"`
+		TokenBody   string `gcfg:"token-body"`
 		ProjectID   string `gcfg:"project-id"`
 		NetworkName string `gcfg:"network-name"`
 	}
@@ -180,7 +181,7 @@ func newGCECloud(config io.Reader) (*GCECloud, error) {
 			networkName = cfg.Global.NetworkName
 		}
 		if cfg.Global.TokenURL != "" {
-			tokenSource = newAltTokenSource(cfg.Global.TokenURL)
+			tokenSource = newAltTokenSource(cfg.Global.TokenURL, cfg.Global.TokenBody)
 		}
 	}
 	client := oauth2.NewClient(oauth2.NoContext, tokenSource)
@@ -368,6 +369,10 @@ func makeFirewallName(name string) string {
 // TODO(a-robinson): Don't just ignore specified IP addresses. Check if they're
 // owned by the project and available to be used, and use them if they are.
 func (gce *GCECloud) CreateTCPLoadBalancer(name, region string, externalIP net.IP, ports []*api.ServicePort, hosts []string, affinityType api.ServiceAffinity) (*api.LoadBalancerStatus, error) {
+	if len(hosts) == 0 {
+		return nil, fmt.Errorf("Cannot EnsureTCPLoadBalancer() with no hosts")
+	}
+
 	err := gce.makeTargetPool(name, region, hosts, translateAffinityType(affinityType))
 	if err != nil {
 		if !isHTTPErrorCode(err, http.StatusConflict) {
